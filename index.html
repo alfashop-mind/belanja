@@ -140,13 +140,7 @@
     <input type="number" id="qty" min="1" placeholder="0">
   </div>
 
-  <datalist id="produk">
-    <option value="Minyak Goreng Bimoli 1L">
-    <option value="Gula Pasir Gulavit 1kg">
-    <option value="Indomie Goreng">
-    <option value="Teh Botol Sosro 350ml">
-    <option value="Susu Dancow 400g">
-  </datalist>
+  <datalist id="produk">\</datalist>
 
   <button class="add-btn" onclick="tambahKeKeranjang()">Tambahkan ke keranjang</button>
 
@@ -166,6 +160,40 @@
     <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png" class="wa-icon" alt="WA">
     Kirim ke Whatsapp
   </button>
+
+  <script>
+  let daftarProduk = [];
+  const SHEET_ID = '1c_AUQNq22ADsOrebCcuOQMwEq-SIJ8CGln-tFVKRd0Q';
+  const SHEET_TAB = 'Sheet1'; // Ganti kalau nama tab-nya berbeda
+
+  async function ambilProduk() {
+    try {
+      const url = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_TAB}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      daftarProduk = data.map(r => r.nama_barang).filter(Boolean);
+    } catch (e) {
+      console.error('Gagal ambil data produk:', e);
+    }
+  }
+
+  document.getElementById('deskripsi').addEventListener('input', function() {
+    const txt = this.value.toLowerCase();
+    const options = daftarProduk
+      .filter(p => p.toLowerCase().includes(txt))
+      .slice(0, 5);
+
+    const dl = document.getElementById('produk');
+    dl.innerHTML = '';
+    options.forEach(item => {
+      const op = document.createElement('option');
+      op.value = item;
+      dl.appendChild(op);
+    });
+  });
+
+  ambilProduk();
+</script>
 
   <script>
     let keranjang = [];
