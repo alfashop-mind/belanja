@@ -13,284 +13,188 @@
       margin: auto;
       color: #444;
     }
-
-    h1 {
-      font-size: 28px;
+    h2 {
       color: #cc5c5c;
+      text-align: center;
     }
-
-    p.subtitle {
-      margin-top: -10px;
-      font-size: 14px;
-      color: #666;
-    }
-
     label {
-      display: block;
       font-weight: 600;
-      margin-top: 20px;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
     }
-
     input[type="text"], input[type="number"] {
       width: 100%;
-      padding: 12px;
-      border-radius: 12px;
+      padding: 10px;
+      border-radius: 10px;
       border: 1.5px solid #ddd;
       box-sizing: border-box;
       font-size: 14px;
     }
-
-    .flex-row {
-      display: flex;
-      gap: 10px;
+    .autocomplete-box {
+      position: relative;
     }
-
-    button {
+    .autocomplete-list {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
       width: 100%;
-      padding: 14px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 15px;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 10;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .autocomplete-item {
+      padding: 8px;
       cursor: pointer;
-      transition: 0.2s ease;
+      transition: background 0.2s;
     }
-
-    .add-btn {
-      background-color: #ffa07a;
-      color: white;
+    .autocomplete-item:hover {
+      background: #ffe6e6;
     }
-
-    .add-btn:hover {
-      background-color: #ff7f50;
-    }
-
-    .wa-btn {
-      background-color: #25d366;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 15px;
       background-color: white;
       border-radius: 8px;
       overflow: hidden;
       font-size: 14px;
     }
-
-    table th, table td {
-      border: 1px solid #ddd;
+    th, td {
+      border: 1px solid #ccc;
       padding: 10px;
       text-align: left;
     }
-
-    .action-btn {
-      background-color: #f4baba;
-      color: #600;
-      font-size: 12px;
-      padding: 5px 8px;
-      border-radius: 6px;
+    th {
+      background-color: #ffebe6;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #ffa07a;
       border: none;
-      margin-right: 4px;
+      color: white;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 15px;
       cursor: pointer;
+      transition: background 0.2s;
     }
-
-    .wa-icon {
-      width: 20px;
-      height: 20px;
+    button:hover {
+      background: #ff7f50;
     }
-
-    #custom-alert {
-      display: none;
-      background-color: #fff0f0;
-      border: 1px solid #f5c2c7;
-      color: #842029;
-      padding: 10px 15px;
-      margin-top: 10px;
-      border-radius: 8px;
+    .hapus-btn {
+      background: #f4baba;
+      color: #600;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <h1>Alfa Shop</h1>
-  <p class="subtitle">Belanja dari rumah, promonya tiap hari ✨</p>
+  <h2>Alfa Shop</h2>
+  <p style="text-align:center; font-size: 14px; color: #777; margin-top: -10px;">Belanja hemat dan mudah dari rumah ❤️</p>
 
-  <div id="custom-alert"></div>
-
-  <label for="nama">Nama Penerima</label>
+  <label>Nama</label>
   <input type="text" id="nama" placeholder="Contoh: Bu Santi">
 
-  <label for="nohp">Nomor HP</label>
+  <label>No HP</label>
   <input type="text" id="nohp" placeholder="Contoh: 081234567890">
 
-  <label>Deskripsi Barang &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Qty</label>
-  <div class="flex-row">
-    <input type="text" id="deskripsi" list="produk" placeholder="Ketik nama barang...">
-    <input type="number" id="qty" min="1" placeholder="0">
+  <div style="display: flex; gap: 10px; align-items: flex-start;">
+  <div style="flex: 8;">
+    <label>Deskripsi Barang</label>
+    <div class="autocomplete-box">
+      <input type="text" id="deskripsi" oninput="showAutocomplete()" placeholder="Ketik nama barang...">
+      <div id="suggestions" class="autocomplete-list" style="display:none;"></div>
+    </div>
   </div>
+  <div style="flex: 2;">
+    <label>Qty</label>
+    <input type="number" id="qty" min="1" placeholder="Jumlah">
+  </div>
+</div>
 
-  <datalist id="produk">\</datalist>
+  <button onclick="tambahKeranjang()">+ Tambahkan ke Keranjang</button>
 
-  <button class="add-btn" onclick="tambahKeKeranjang()">Tambahkan ke keranjang</button>
-
-  <h3 style="margin-top: 30px;">Keranjang</h3>
-  <table id="keranjang">
+  <h3 style="margin-top: 30px;">🛒 Keranjang</h3>
+  <table>
     <thead>
-      <tr>
-        <th>Deskripsi Barang</th>
-        <th>Qty</th>
-        <th>Aksi</th>
-      </tr>
+      <tr><th>Deskripsi</th><th>Qty</th><th>Aksi</th></tr>
     </thead>
-    <tbody></tbody>
+    <tbody id="keranjang"></tbody>
   </table>
 
-  <button class="wa-btn" onclick="kirimKeWhatsapp()">
-    <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png" class="wa-icon" alt="WA">
-    Kirim ke Whatsapp
-  </button>
+  <button onclick="kirimKeWhatsapp()" style="background: #25d366;"><img src='https://img.icons8.com/color/24/000000/whatsapp--v1.png' style='vertical-align: middle; margin-right: 8px;'>Kirim ke WhatsApp</button>
 
   <script>
-  let daftarProduk = [];
-  const SHEET_ID = '1c_AUQNq22ADsOrebCcuOQMwEq-SIJ8CGln-tFVKRd0Q';
-  const SHEET_TAB = 'Sheet1'; // Ganti kalau nama tab-nya berbeda
+    const produkList = [
+      "Minyak Goreng Bimoli 1L",
+      "Gula Pasir Gulavit 1kg",
+      "Indomie Goreng",
+      "Teh Botol Sosro 350ml",
+      "Susu Dancow 400g",
+      "Kecap ABC 600ml",
+      "Rinso Cair 800ml"
+    ];
 
-  async function ambilProduk() {
-    try {
-      const url = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_TAB}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      daftarProduk = data.map(r => r.nama_barang).filter(Boolean);
-    } catch (e) {
-      console.error('Gagal ambil data produk:', e);
+    const keranjang = [];
+
+    function showAutocomplete() {
+      const input = document.getElementById('deskripsi');
+      const keyword = input.value.toLowerCase();
+      const box = document.getElementById('suggestions');
+      if (!keyword) return box.style.display = 'none';
+      const hasil = produkList.filter(p => p.toLowerCase().includes(keyword)).slice(0, 5);
+      box.innerHTML = hasil.map(p => `<div class='autocomplete-item' onclick='pilihProduk("${p}")'>${p}</div>`).join('');
+      box.style.display = hasil.length ? 'block' : 'none';
     }
-  }
 
-  document.getElementById('deskripsi').addEventListener('input', function() {
-    const txt = this.value.toLowerCase();
-    const options = daftarProduk
-      .filter(p => p.toLowerCase().includes(txt))
-      .slice(0, 5);
+    function pilihProduk(val) {
+      document.getElementById('deskripsi').value = val;
+      document.getElementById('suggestions').style.display = 'none';
+    }
 
-    const dl = document.getElementById('produk');
-    dl.innerHTML = '';
-    options.forEach(item => {
-      const op = document.createElement('option');
-      op.value = item;
-      dl.appendChild(op);
-    });
-  });
-
-  ambilProduk();
-</script>
-
-  <script>
-    let keranjang = [];
-    let indexEdit = -1;
-
-    function tampilkanAlert(pesan, warna = '#fff0f0') {
-      const alertBox = document.getElementById('custom-alert');
-      alertBox.innerText = pesan;
-      alertBox.style.display = 'block';
-      alertBox.style.backgroundColor = warna;
-
-      setTimeout(() => {
-        alertBox.style.display = 'none';
-      }, 3000);
+    function tambahKeranjang() {
+      const deskripsi = document.getElementById('deskripsi').value;
+      const qty = parseInt(document.getElementById('qty').value);
+      if (!deskripsi || !qty || qty < 1) return alert('Lengkapi deskripsi dan qty.');
+      keranjang.push({ deskripsi, qty });
+      renderKeranjang();
+      document.getElementById('deskripsi').value = '';
+      document.getElementById('qty').value = '';
     }
 
     function renderKeranjang() {
-      const tbody = document.querySelector('#keranjang tbody');
+      const tbody = document.getElementById('keranjang');
       tbody.innerHTML = '';
       keranjang.forEach((item, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        tbody.innerHTML += `<tr>
           <td>${item.deskripsi}</td>
           <td>${item.qty}</td>
-          <td>
-            <button class="action-btn" onclick="editItem(${index})">Edit</button>
-            <button class="action-btn" onclick="hapusItem(${index})">Hapus</button>
-          </td>`;
-        tbody.appendChild(row);
+          <td style="text-align: center; vertical-align: middle; line-height: 1;"><button class='hapus-btn' onclick='hapusItem(${index})'>Hapus</button></td>
+        </tr>`;
       });
     }
 
-    function tambahKeKeranjang() {
-      const deskripsi = document.getElementById('deskripsi').value.trim();
-      const qtyVal = document.getElementById('qty').value.trim();
-      const qty = parseInt(qtyVal);
-
-      if (!deskripsi) {
-        tampilkanAlert("Deskripsi barang tidak boleh kosong.");
-        return;
-      }
-
-      if (!qtyVal || isNaN(qty) || qty <= 0) {
-        tampilkanAlert("Qty harus berupa angka lebih dari 0.");
-        return;
-      }
-
-      if (indexEdit >= 0) {
-        keranjang[indexEdit] = { deskripsi, qty };
-        indexEdit = -1;
-        tampilkanAlert("Item berhasil diperbarui.", "#f0fff0");
-      } else {
-        keranjang.push({ deskripsi, qty });
-        tampilkanAlert("Item ditambahkan ke keranjang.", "#f0fff0");
-      }
-
-      document.getElementById('deskripsi').value = '';
-      document.getElementById('qty').value = '';
+    function hapusItem(i) {
+      keranjang.splice(i, 1);
       renderKeranjang();
     }
 
-    function editItem(index) {
-      const item = keranjang[index];
-      document.getElementById('deskripsi').value = item.deskripsi;
-      document.getElementById('qty').value = item.qty;
-      indexEdit = index;
-    }
-
-    function hapusItem(index) {
-      if (confirm("Yakin ingin menghapus item ini?")) {
-        keranjang.splice(index, 1);
-        renderKeranjang();
-        tampilkanAlert("Item dihapus dari keranjang.");
-      }
-    }
-
     function kirimKeWhatsapp() {
-      const nama = document.getElementById('nama').value.trim();
-      const nohp = document.getElementById('nohp').value.trim();
-
-      if (!nama || !nohp) {
-        tampilkanAlert("Nama dan Nomor HP wajib diisi.");
-        return;
-      }
-
-      if (keranjang.length === 0) {
-        tampilkanAlert("Keranjang masih kosong.");
-        return;
-      }
-
-      let pesan = `Nama: ${nama}\nNomor HP: ${nohp}\nDeskripsi Barang:\n`;
-      keranjang.forEach(item => {
-        pesan += `- ${item.deskripsi}: ${item.qty}\n`;
-      });
-
-      const url = `https://wa.me/6285148035051?text=${encodeURIComponent(pesan)}`;
-      window.open(url, '_blank');
+      const nama = document.getElementById('nama').value;
+      const nohp = document.getElementById('nohp').value;
+      if (!nama || !nohp) return alert('Isi nama dan nomor HP.');
+      let pesan = `Nama: ${nama}\nNomor HP: ${nohp}\nDeskripsi Barang:`;
+      keranjang.forEach(k => pesan += `\n- ${k.deskripsi}: ${k.qty}`);
+      const waUrl = `https://wa.me/6285148035051?text=${encodeURIComponent(pesan)}`;
+      window.open(waUrl, '_blank');
     }
   </script>
 
